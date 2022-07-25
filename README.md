@@ -66,7 +66,7 @@
 ## How to start
 ``` bash
 # clone projext
-git clone https://github.com/chaohangz/blog.git
+git clone git@github.com:jyb911/personalBlog.git
 
 # 安装依赖
 cd blog
