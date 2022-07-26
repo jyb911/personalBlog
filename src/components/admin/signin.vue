@@ -1,5 +1,7 @@
 <template>
+
   <div id="sign_wrap" v-if="!isShow">
+    <loading v-if="isLoading"></loading>
     <h1>后台管理</h1>
     <el-input v-model="name" placeholder="请输入用户名"></el-input>
     <el-input v-model="password" placeholder="请输入密码" type="password"></el-input>
@@ -13,20 +15,24 @@
 </template>
 
 <script>
+import loading from '../loading.vue'
   export default {
+  components: { loading },
     name: 'signin',
     data() {
       return {
         name: '',
         password: '',
         hasName: false, // 用户名被占
-        isShow: false
+        isShow: false,
+        isLoading: true
       }
     },
     mounted: function () {
         let _this = this
         this.$http.get('api/admin/logStatus').then(
           res => {
+            _this.isLoading = false
             if (res.data.type == "success") {
               _this.isShow = true
             }
@@ -132,7 +138,13 @@
       logout () {
         this.isShow = false
         this.$http.get('/api/admin/logout').then(
-          res => console.log('success', res),
+          res => {
+            if (res.data.type == 'logout success') {
+              alert("登出成功")
+            } else {
+              alert("登出失败")
+            }
+          },
           err => console.log('err', err)
         )
       }

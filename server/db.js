@@ -15,9 +15,16 @@ const articleSchema = new mongoose.Schema({
   labels: Array
 })
 
+const sessionSchema = new mongoose.Schema({
+  session: String,
+  expires: Date,
+  lastModified: Date
+})
+
 const Models = {
   User: mongoose.model('User', userSchema),
-  Article: mongoose.model('Article', articleSchema)
+  Article: mongoose.model('Article', articleSchema),
+  sessionSchema: mongoose.model('Session', sessionSchema)
 }
 
 module.exports = Models

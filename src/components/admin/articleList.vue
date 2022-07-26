@@ -37,36 +37,57 @@
     methods: {
       // 跳转至文章编辑页
       articleEdit: function (id) {
-        this.$router.push('/admin/articleEdit/' + id)
+        let that = this
+        this.$http.get('/api/admin/logStatus').then(res => {
+          if (res.data.type == 'success') {
+            that.$router.push('/admin/articleEdit/' + id)
+          } else {
+            that.$router.push('/admin/signin')
+            alert('博主才可以这样做')
+          }
+        },
+        err => console.log(err))
+        
+        
       },
       // 删除文章
       deleteArticle: function (id) {
-        let self = this
-        this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          self.$http.post('/api/admin/deleteArticle', {
-            _id: id
-          }).then(
-            response => {
-              self.$message({
-                type: 'success',
-                message: '删除成功!'
+        let that = this
+        this.$http.get('/api/admin/logStatus').then(res => {
+          if (res.data.type == 'success') {
+            let self = that
+            that.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              self.$http.post('/api/admin/deleteArticle', {
+                _id: id
+              }).then(
+                response => {
+                  self.$message({
+                    type: 'success',
+                    message: '删除成功!'
+                  });
+                  self.fetchData()
+                },
+                response => {
+                  console.log(response)
+                }
+              )
+            }).catch(() => {
+              that.$message({
+                type: 'info',
+                message: '已取消删除'
               });
-              self.fetchData()
-            },
-            response => {
-              console.log(response)
-            }
-          )
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
-        });
+            });
+          } else {
+            that.$router.push('/admin/signin')
+            alert('博主才可以这样做')
+          }
+        },
+        err => console.log(err))
+        
       },
       // 更新数据
       fetchData: function () {

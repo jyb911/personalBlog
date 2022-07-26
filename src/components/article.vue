@@ -29,7 +29,9 @@
       this.$http.get('/api/articleList').then(
         response => this.articleList = response.body.reverse(),
         response => console.log(response)
-      )
+      ).catch(err => {
+        console.log(err)
+      })
     },
     methods: {
       articleDetail: function (id) {

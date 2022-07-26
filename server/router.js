@@ -2,19 +2,32 @@ const express = require('express')
 const router = express.Router()
 const db = require('./db')
 const check = require('./check')
-const checkLogin = check.checkLogin
+
 
 // 验证登录状态
 router.get('/api/admin/logStatus', function (req, res) {
-  checkLogin(req, res)
-  res.json({type: 'success'})
+  if(!req.session.username) {
+    res.json({type: 'failed'})
+  } else {
+    res.json({type: 'success'})
+  }
+  
 })
 
 
 // 退出登录
 router.get('/api/admin/logout', function (req, res) {
-  delete req.session.username;
-  res.json({type: 'logout success'})
+  let flag = 0
+  req.session.destroy(function(err){
+    console.log(err);
+    flag = 1
+  })
+  if (!flag) {
+    res.json({type: 'logout success'})
+  } else {
+    res.json({type: 'logout failed'})
+  }
+    
 })
 
 
@@ -59,7 +72,6 @@ router.get('/api/admin/getUser/:name', function (req, res) {
 
 // 获取所有文章
 router.get('/api/articleList', function (req, res) {
-  checkLogin(req, res)
   db.Article.find({}, function (err, docs) {
     if (err) {
       console.error(err)
@@ -67,6 +79,7 @@ router.get('/api/articleList', function (req, res) {
     }
     res.json(docs)
   })
+  
 })
 
 // 文章详情页
